@@ -155,15 +155,14 @@ export default class Message extends React.Component {
         <div className="ms-Callout-main">
           <div className="ms-Callout-header username" style={this.getUsernameColourStyle(data.username)}>
             {data.username}
+            <span className="prettyDateTime" data-datetime={data.date}>
+              @{this.utils.getPrettyDate(data.date)}
+            </span>
           </div>
           <div className="ms-Callout-inner">
             <div className="ms-Callout-content">
               <p className="ms-Callout-subText ms-Callout-subText--s" dangerouslySetInnerHTML={{__html: cleanDirtyMessage(data.message)}}></p>
-              <span className="ms-ListItem-metaText prettyDateTime" data-datetime={data.date}>
-                {this.utils.getPrettyDate(data.date)}
-              </span>
             </div>
-
           </div>    
         </div>
       </div>
