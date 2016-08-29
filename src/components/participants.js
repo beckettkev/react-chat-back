@@ -5,7 +5,7 @@ import ChatActions from '../actions/ChatActions';
 import Colours from '../ui/colours.js';
 
 function getParticipantsMessage(amount) {
-  return amount > 1 ? `there are ${amount} participants` : `there's 1 participant`;
+  return amount > 1 ? `There are ${amount} participants:` : `There's 1 participant:`;
 }
 
 function getParticipants() {
@@ -69,7 +69,7 @@ export default class Participants extends React.Component {
             className="ms-ListItem message animated flipInX" 
             data-username={member}>
               <span 
-                className="username ms-ListItem-metaText" 
+                className="username ms-ListItem-primary" 
                 style={{'color':colours.getUsernameColour(member)}}>
                 {member}
               </span>
@@ -82,7 +82,7 @@ export default class Participants extends React.Component {
         return (
           <div key="particpant-message">
             <span className="ms-ListItem-primaryText animated fadeIn">
-              Welcome to Chat Back {this.socket.username} - {getParticipantsMessage(this.state.amount)}
+              {getParticipantsMessage(this.state.amount)}
             </span>
             {this.state.members.map(this.getUsernameListing)}
           </div>
@@ -92,7 +92,7 @@ export default class Participants extends React.Component {
 
   render() {
       return (
-        <div key="participants">
+        <div key="participants" className="participant-list">
           {this.getWelcomeMessage()}
         </div>
       );
