@@ -16,6 +16,7 @@ function getInitialState() {
   return { 
     messages: [], 
     typings: [],
+    joiners: [],
     arrow: 'Left'
   };
 }
@@ -58,6 +59,14 @@ export default class Message extends React.Component {
       actions.addMessage(data);
     });
 
+    socket.on(Constants.Sockets.Events.Joiner, data => {
+      this.state.joiners.push(data.username);
+
+      const joined = window.setTimeout(() => {
+        this.state.joiners = this.state.joiners.filter(member => member === data.username);
+      }, 2000);
+    });
+
     // Whenever the server emits 'typing', show the typing message
     socket.on(Constants.Sockets.Events.StartTyping, data => {
       actions.addMemberTyping(data);
@@ -75,7 +84,7 @@ export default class Message extends React.Component {
 
   onChatEvent = () => {
     const chatInformation = getChatState();
-    const messages = chatInformation.Thread.Messages.sort(function(a,b){return a.date-b.date});
+    const messages = chatInformation.Thread.Messages.sort(function(a,b) {return a.date-b.date});
 
     this.setState({
       messages: messages,
@@ -93,26 +102,10 @@ export default class Message extends React.Component {
     }, Constants.Messages.PrettyDate.RefreshFrequency);
   }
 
-  isBrightEnough = (colour) => {
-    const c = colour.substring(1);      // strip #
-    const rgb = parseInt(c, 16);   // convert rrggbb to decimal
-    const r = (rgb >> 16) & 0xff;  // extract red
-    const g = (rgb >>  8) & 0xff;  // extract green
-    const b = (rgb >>  0) & 0xff;  // extract blue
-
-    const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
-
-    if (luma < 100) {
-        return false;
-    } else {
-        return true;
-    }
-  }
-
   getUsernameColourStyle(username) {
     const colours = new Colours();
     const backgroundColour = colours.getUsernameColour(username);
-    const fontColour = this.isBrightEnough(backgroundColour) ? '#000000' : '#FFFFFF';
+    const fontColour = colours.isBrightEnough(backgroundColour) ? '#000000' : '#FFFFFF';
 
     return {
       backgroundColor: backgroundColour,
@@ -135,19 +128,27 @@ export default class Message extends React.Component {
     return this.state.arrow;
   }
 
-  writeTyping = username => {
+  getMessageBlock = (message, username) => {
     return (
       <div 
          className={`ms-ListItem message typing animated flipInX`} 
          data-username={username}>
            <span className="username ms-ListItem-primaryText" style={this.getUsernameColourStyle(username)}>
-             {username} is typing... 
+             {message}
            </span>
       </div> 
-    );   
+    );
   }
 
-  writeMessage = (data, i) => {
+  writeLatestJoiner = username => {
+    return this.getMessageBlock(`${username} has just joined...`, username);
+  }
+
+  writeTyping = username => {
+    return this.getMessageBlock(`${username} is typing...`, username);
+  }
+
+  writeChatMessage = (data, i) => {
     const arrow = this.arrowDecider(i);
 
     return (
@@ -173,8 +174,9 @@ export default class Message extends React.Component {
     return (
       <div className="container">
         <div className="messages">
+          {this.state.joiners.map(this.writeLatestJoiner)}
           {this.state.typings.map(this.writeTyping)}
-          {this.state.messages.map(this.writeMessage)}
+          {this.state.messages.map(this.writeChatMessage)}
         </div>
       </div>
     );

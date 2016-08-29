@@ -5,9 +5,14 @@ import Constants from '../constants/Constants';
 import Assign from 'object-assign';
 
 let Participants = [];
+let LastJoiner = null;
 
 function setMembers(members) {
   Participants = members;
+}
+
+function addJoiner(member) {
+  LastJoiner = member;
 }
 
 function removeMember(member) {
@@ -15,10 +20,16 @@ function removeMember(member) {
 }
 
 const ParticipantsStore = Assign({}, EventEmitter.prototype, {
+  getLatestJoiner() {
+    return {
+      'LastJoiner': LastJoiner
+    };
+  },
+
   getCurrentMembers() {
     return {
-        'Members': Participants,
-        'Total': Participants.length
+      'Members': Participants,
+      'Total': Participants.length
     };
   },
 
@@ -40,11 +51,14 @@ AppDispatcher.register(function(action) {
       case ChatConstants.UPDATE_PARTICIPANTS:
         setMembers(action.results);
         break;
+      case ChatConstants.PARTICIPANT_JOIN:
+        addJoiner(action.results);
+        break;
       case ChatConstants.PARTICIPANT_LEAVE:
         removeMember(action.results);
         break;
       default:
-            //no op
+        //no op
     }
 
     ParticipantsStore.emitChange();

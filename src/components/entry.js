@@ -65,6 +65,8 @@ export default class Entry extends React.Component {
 
   onKeyDown = event => {
     if (event.which === 13 && !event.ctrlKey) {
+      event.preventDefault();
+
       const message = {
         username: this.props.username,
         message: event.currentTarget.value.replace(/\r?\n/g, '<br />'),
@@ -78,6 +80,8 @@ export default class Entry extends React.Component {
       actions.addMessage(message);
 
       event.currentTarget.value = '';
+  
+      return false;
     } else if (event.which === 13 && event.ctrlKey) {
       event.currentTarget.value += '\n';
     }

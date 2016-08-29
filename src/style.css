@@ -8,6 +8,9 @@ body{
 .username {
     font-weight: bold;
 }
+.ms-Callout-header span.prettyDateTime {
+    float:right;
+}
 .textarea {
     width: 90%;
     outline: 0;

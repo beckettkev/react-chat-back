@@ -30,11 +30,12 @@ export default class Login extends React.Component {
     // If the username is valid
     if (username) {
       const actions = new ChatActions();
+
       this.setState({ display: false });
 
       // Tell the server your username
       this.socket.emit(Constants.Sockets.Events.AddUser, username);
-      
+
       this.props.onLoginMember(username);
 
       //actions.addMember(username);

@@ -17,6 +17,10 @@ export default class ChatActions {
       dispatch(members, ChatConstants.UPDATE_PARTICIPANTS);
     }
 
+    setJoiner(member) {
+      dispatch(member, ChatConstants.PARTICIPANT_JOIN);
+    }
+
     removeMember(member) {
       dispatch(member, ChatConstants.PARTICIPANT_LEAVE);
     }

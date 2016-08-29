@@ -40,11 +40,12 @@ export default class Participants extends React.Component {
     });
 
     socket.on(Constants.Sockets.Events.Joiner, data => {
+      //actions.setJoiner(data.username);
       actions.setMembers(data.users);
     });
 
-    socket.on(Constants.Sockets.Events.Leaver, username => {
-      actions.removeMember(username);
+    socket.on(Constants.Sockets.Events.Leaver, data => {
+      actions.removeMember(data.username);
     });
 
     Store.addChangeListener(this.onParticipantEvent);
